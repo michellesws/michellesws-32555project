@@ -9,45 +9,50 @@ the group work share file can access this link https://drive.google.com/drive/fo
 https://github.com/FarshidKeivanian
 
 
-## CLIUniApp code
+## CLIUniApp code (Python)
 
-Java 11+ (uses `String.repeat`). No extra libraries.
+Python 3.8+. No extra libraries. Students are saved as JSON in `students.data`.
 
 ### Done (model + utilities)
 
-| Class | What it does |
+| File | What it does |
 |---|---|
-| `Subject` | Random 25–100 mark, grade (HD/D/C/P/Z) from mark |
-| `Student` | id, name, email, password, enrolments (max 4), average mark, pass/fail |
-| `EnrolmentSystem` | The database: reads/writes `students.data`, finds/adds/removes students, generates unique ids |
-| `Validator` | Email and password regex |
-| `MessageHandler` | Coloured and indented console output |
+| `subject.py` | `Subject`: random 25–100 mark, grade (HD/D/C/P/Z) from mark |
+| `student.py` | `Student`: id, name, email, password, subjects (max 4), average mark, pass/fail |
+| `enrolment_system.py` | `EnrolmentSystem`, the database: reads/writes `students.data` (JSON), finds/adds/removes students, generates unique ids |
+| `validator.py` | `Validator`: email and password regex |
+| `message_handler.py` | `MessageHandler`: coloured and indented console output |
 
 Main methods for controllers:
 
-```java
-EnrolmentSystem db = new EnrolmentSystem();       // creates/loads students.data
+```python
+from enrolment_system import EnrolmentSystem
+from student import Student
+from subject import Subject
+from validator import Validator
 
-// register
-Validator.isValidEmail(email); Validator.isValidPassword(pw);
-db.findStudentByEmail(email);                     // null = not registered yet
-db.addStudent(new Student(db.generateStudentId(), name, email, pw));   // saves
+db = EnrolmentSystem()                            # creates/loads students.data
 
-// enrol / remove / change password (then save!)
-student.canEnrol();
-student.enrol(new Subject(db.generateSubjectId()));
-student.removeSubject(subjectId);
-student.setPassword(newPw);
-db.saveData();
+# register
+Validator.is_valid_email(email); Validator.is_valid_password(pw)
+db.find_student_by_email(email)                   # None = not registered yet
+db.add_student(Student(db.generate_student_id(), name, email, pw))   # saves
 
-// admin
-db.getStudents();  db.removeStudent(id);  db.clearStudents();
-student.getOverallGrade();  student.isPass();  student.getAverageMark();
+# enrol / remove / change password (then save!)
+student.can_enrol()
+student.enrol(Subject(db.generate_subject_id()))
+student.remove_subject(subject_id)
+student.password = new_pw
+db.save_data()
+
+# admin
+db.get_students();  db.remove_student(student_id);  db.clear_students()
+student.overall_grade();  student.is_pass();  student.average_mark()
 ```
 
 ### To do (rest of the team)
 
-- [ ] `UniApp` – main university menu (A/S/X)
+- [ ] Main university menu (A/S/X)
 - [ ] `StudentAccountControl` – student menu: login / register (l/r/x)
 - [ ] `StudentEnrolmentControl` – enrolment menu (c/e/r/s/x)
 - [ ] `AdminControl` – admin menu (c/g/p/r/s/x)
