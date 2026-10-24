@@ -66,7 +66,11 @@ class StudentEnrolmentControl:
         if not self.student.can_enrol():
             msg.error(f"Students are allowed to enrol in {MAX_SUBJECTS} subjects only", 2)
             return
-        subject = Subject(self.db.generate_subject_id())
+        try:
+            subject = Subject(self.db.generate_subject_id())
+        except RuntimeError:
+            msg.error("No subject ids left, cannot enrol", 2)
+            return
         self.student.enrol(subject)
         self.db.save_data()
         msg.info(f"Enrolling in Subject-{subject.subject_id}", 2)

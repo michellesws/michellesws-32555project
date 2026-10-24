@@ -135,7 +135,12 @@ class EnrolmentWindow(tk.Toplevel):
         if not self.student.can_enrol():
             ExceptionWindow(self, "Enrolment Error", f"Students are allowed to enrol in {MAX_SUBJECTS} subjects only.")
             return
-        self.student.enrol(Subject(self.db.generate_subject_id()))
+        try:
+            subject = Subject(self.db.generate_subject_id())
+        except RuntimeError:
+            ExceptionWindow(self, "Enrolment Error", "No subject ids left, cannot enrol.")
+            return
+        self.student.enrol(subject)
         self.db.save_data()
         self.refresh()
 

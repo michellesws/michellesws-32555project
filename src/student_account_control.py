@@ -57,8 +57,13 @@ class StudentAccountControl:
             if not name:
                 msg.error("Name cannot be empty", 1)
                 continue
+            try:
+                student_id = self.db.generate_student_id()
+            except RuntimeError:
+                msg.error("No student ids left, cannot register", 1)
+                return
             msg.info(f"Enrolling Student {name}", 1)
-            self.db.add_student(Student(self.db.generate_student_id(), name, email, password))
+            self.db.add_student(Student(student_id, name, email, password))
             return
 
     def login(self):
