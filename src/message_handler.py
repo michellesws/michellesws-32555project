@@ -15,6 +15,7 @@ class MessageHandler:
 
     @staticmethod
     def message(text, indent=0):
+        """Prints plain text at the given indent level."""
         print(INDENT * indent + text)
 
     @staticmethod
@@ -24,12 +25,15 @@ class MessageHandler:
 
     @staticmethod
     def info(text, indent=0):
+        """Prints text in yellow (general information)."""
         MessageHandler.message(YELLOW + text + RESET, indent)
 
     @staticmethod
     def success(text, indent=0):
+        """Prints text in green (headings such as Student Sign Up)."""
         MessageHandler.message(GREEN + text + RESET, indent)
 
     @staticmethod
     def error(text, indent=0):
+        """Prints text in red (errors)."""
         MessageHandler.message(RED + text + RESET, indent)

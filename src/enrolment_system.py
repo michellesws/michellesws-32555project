@@ -19,6 +19,7 @@ class EnrolmentSystem:
     """
 
     def __init__(self, file_name=FILE_NAME):
+        """Loads students.data (creating it if missing)."""
         self.file_name = file_name
         self.students = []
         self.used_student_ids = set()
@@ -55,12 +56,14 @@ class EnrolmentSystem:
         return list(self.students)
 
     def find_student(self, student_id):
+        """Returns the student with this id, or None."""
         for s in self.students:
             if s.student_id == student_id:
                 return s
         return None
 
     def find_student_by_email(self, email):
+        """Returns the student with this email (case-insensitive), or None."""
         for s in self.students:
             if s.email.lower() == email.lower():
                 return s
@@ -95,6 +98,7 @@ class EnrolmentSystem:
 
     @staticmethod
     def _generate_unique_id(used, maximum, digits):
+        """Returns a random zero-padded id from 1 to maximum that is not in used."""
         if len(used) >= maximum:
             raise RuntimeError("No more ids available")
         while True:
@@ -104,6 +108,7 @@ class EnrolmentSystem:
                 return new_id
 
     def _rebuild_used_ids(self):
+        """Rebuilds the sets of taken student and subject ids from the current students."""
         # ids of removed students/subjects become free again after the next save/load
         self.used_student_ids = {s.student_id for s in self.students}
         self.used_subject_ids = {sub.subject_id for s in self.students for sub in s.subjects}

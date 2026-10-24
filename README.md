@@ -50,10 +50,19 @@ db.get_students();  db.remove_student(student_id);  db.clear_students()
 student.overall_grade();  student.is_pass();  student.average_mark()
 ```
 
-### To do (rest of the team)
+### Menus and GUI
 
-- [ ] Main university menu (A/S/X)
-- [ ] `StudentAccountControl` – student menu: login / register (l/r/x)
-- [ ] `StudentEnrolmentControl` – enrolment menu (c/e/r/s/x)
-- [ ] `AdminControl` – admin menu (c/g/p/r/s/x)
-- [ ] GUIUniApp – login, enrolment, subject and exception windows
+- [x] `App.py` – main university menu (A/S/X)
+- [x] `student_account_control.py` – `StudentAccountControl`, student menu: login / register (l/r/x)
+- [x] `student_enrolment_control.py` – `StudentEnrolmentControl`, enrolment menu (c/e/r/s/x)
+- [x] `admin_control.py` – `AdminControl`, admin menu (c/g/p/r/s/x)
+- [x] `GUIUniApp.py` – login, enrolment, subject and exception windows (tkinter)
+
+### Running
+
+Run both apps from the project root so they share the same `students.data`:
+
+```
+python src/App.py         # CLIUniApp
+python src/GUIUniApp.py   # GUIUniApp (register students in CLIUniApp first)
+```
