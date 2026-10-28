@@ -9,9 +9,7 @@ from student_account_control import StudentAccountControl
 
 def main():
     """Shows the university menu and opens the admin or student menu until the user exits."""
-    if os.name == "nt":
-        os.system("")  # turns on ANSI colours in the Windows console
-
+    
     db = EnrolmentSystem()
     try:
         while True:

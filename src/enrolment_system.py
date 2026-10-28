@@ -1,3 +1,5 @@
+import base64
+import hashlib
 import json
 import os
 import random
@@ -6,12 +8,14 @@ import sys
 from student import Student
 
 FILE_NAME = "students.data"
+SECRET_KEY = b"32555-uni-enrolment-key"
 
 
 class EnrolmentSystem:
     """The "Database" class: owns the list of students and keeps it in sync with students.data.
 
-    students.data holds a JSON array of students, each with their subjects.
+    students.data holds a JSON array of students, each with their subjects,
+    encoded with encode()/decode() so the raw data cannot be read by opening the file.
     Every method that changes data saves to the file straight away.
 
     If you change a Student you got from find_student()/find_student_by_email()
@@ -36,20 +40,48 @@ class EnrolmentSystem:
             with open(self.file_name, "r", encoding="utf-8") as f:
                 text = f.read()
             if text.strip():
-                self.students = [Student.from_dict(d) for d in json.loads(text)]
+                self.students = [Student.from_dict(d) for d in json.loads(self.decode(text))]
         except (OSError, ValueError, KeyError, TypeError) as e:
             print(f"Could not read {self.file_name}: {e}", file=sys.stderr)
             self.students = []
         self._rebuild_used_ids()
 
     def save_data(self):
-        """Writes all students to students.data as JSON."""
+        """Writes all students to students.data as encoded JSON."""
         try:
+            text = json.dumps([s.to_dict() for s in self.students])
             with open(self.file_name, "w", encoding="utf-8") as f:
-                json.dump([s.to_dict() for s in self.students], f, indent=2)
+                f.write(self.encode(text))
         except OSError as e:
             print(f"Could not write {self.file_name}: {e}", file=sys.stderr)
         self._rebuild_used_ids()
+
+    @staticmethod
+    def _keystream(length):
+        """Returns length bytes derived from SECRET_KEY (SHA-256 of key + block counter)."""
+        stream = b""
+        counter = 0
+        while len(stream) < length:
+            stream += hashlib.sha256(SECRET_KEY + counter.to_bytes(4, "big")).digest()
+            counter += 1
+        return stream[:length]
+
+    @classmethod
+    def encode(cls, text):
+        """XORs the text with the keystream and returns it as base64."""
+        data = text.encode("utf-8")
+        scrambled = bytes(a ^ b for a, b in zip(data, cls._keystream(len(data))))
+        return base64.b64encode(scrambled).decode("ascii")
+
+    @classmethod
+    def decode(cls, text):
+        """Reverses encode(). Plain JSON (an old, unencoded file) is returned unchanged."""
+        text = text.strip()
+        if text.startswith("["):
+            return text
+        scrambled = base64.b64decode(text, validate=True)
+        data = bytes(a ^ b for a, b in zip(scrambled, cls._keystream(len(scrambled))))
+        return data.decode("utf-8")
 
     def get_students(self):
         """Returns a copy of the list (changing the list does not affect the database)."""
