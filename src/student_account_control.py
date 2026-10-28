@@ -36,6 +36,15 @@ class StudentAccountControl:
         msg.info("email and password formats acceptable", 1)
         return email, password
 
+    def read_name(self, email):
+        """Asks for the name until it matches the email, e.g. john.smith@... -> John Smith (any case)."""
+        expected = email.split("@")[0].replace(".", " ")
+        while True:
+            name = " ".join(msg.prompt("Name: ", 1).split())
+            if name.lower() == expected.lower():
+                return expected.title()
+            msg.error(f"Name must match the email: {expected.title()}", 1)
+
     def register(self):
         """Keeps asking until the student is registered, or the user types x as the email."""
         msg.success("Student Sign Up", 1)
@@ -53,10 +62,7 @@ class StudentAccountControl:
                 msg.error(f"Student {existing.name} already exists", 1)
                 continue
 
-            name = msg.prompt("Name: ", 1).strip()
-            if not name:
-                msg.error("Name cannot be empty", 1)
-                continue
+            name = self.read_name(email)
             try:
                 student_id = self.db.generate_student_id()
             except RuntimeError:
